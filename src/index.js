@@ -1,6 +1,7 @@
 const dogTable = document.querySelector("#table-body")
 const dogAPI = "http://localhost:3000/dogs"
 const form = document.querySelector("#dog-form")
+let selectedDog;
 
 
 fetch(dogAPI)
@@ -35,32 +36,34 @@ function renderDog (dog) {
 }
 
 function handleEdit(dog) {
+    selectedDog = dog
     form.name.value = dog.name
     form.breed.value = dog.breed
     form.sex.value = dog.sex
 
-    form.addEventListener("submit", (e) => {
-        e.preventDefault()
-    
-        const updateDog = {
-            id: dog.id,
-            name: e.target.name.value,
-            breed: e.target.breed.value,
-            sex: e.target.sex.value
-        }
-    
-        console.log(updateDog)
-        // fetch(`${dogAPI}/${dog.id}`, {
-        //     method: "PATCH",
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     body: JSON.stringify(updateDog)
-        // })
-        
-    })
-
 }
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault()
+
+    const updateDog = {
+        name: e.target.name.value,
+        breed: e.target.breed.value,
+        sex: e.target.sex.value
+    }
+
+    console.log(updateDog)
+    fetch(`${dogAPI}/${selectedDog.id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updateDog)
+    })
+    .then(res=>res.json())
+    .then(console.log)
+    
+})
 
 
 
